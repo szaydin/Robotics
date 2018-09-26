@@ -1,0 +1,11 @@
+In Competition folder
+
+1) roscore
+2) roslaunch turtlebot_bringup minimal.launch
+3) rosrun map_server map_server map.yaml
+4) roslaunch turtlebot_navigation amcl_demo.launch map_file:=file:///home/jaeyeon/Documents/School/CMPUT412/Competition%203/map.yaml
+5) roslaunch turtlebot_rviz_launchers view_navigation.launch
+6) ./nav.py
+
+
+rosrun rqt_reconfigure rqt_reconfigure

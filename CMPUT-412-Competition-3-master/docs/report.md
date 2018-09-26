@@ -1,0 +1,87 @@
+## CMPUT 412 Competition 3: Race with GMapping and AMCL, By Jae-yeon (Leo) Yoon and Sumeyye Adyin ##
+
+Objectives
+==========
+
+Generally, the objective of this competition was to apply gained knowledge of robot mapping and localization concepts and techniques.
+
+Mapping concepts were applied by utilizing Simultaneous Localization and Mapping (SLAM) via GMapping to construct a map of a designated area of the second floor of the Computing Science Center at the University of Alberta.
+
+[map](https://github.com/leoyoon17/CMPUT-412-Competition-3/blob/master/map.png)
+GMapping generated map of the second floor.
+
+Through the construction of a relatively accurate map, our robot was to navigate around pylons placed in a rectangular formation (where the placement was an unknown) as fast as possible.
+
+
+Background
+==========
+
+The Robot Operating System (ROS) was the main software component used in our Turtlebot 2 machines. Documentation of ROS can be found [here](http://www.ros.org/) and the specifications for the physical robot can be found [here](http://www.turtlebot.com/turtlebot2/).
+
+For localization, the robot used both the map.pgm and map.yaml files to simulate its relative location in the real world environment. As stated in the objective, the .pgm and .yaml files were produced through SLAM via GMapping. Documentation on GMapping concepts can be found [here](http://wiki.ros.org/gmapping).
+
+In general, the GMapping algorithm distributes a Rao-Blackwellized particle filter in the simulated environment to predict both the location of the robot and the position of obstacles. Through information recieved from our visual sensor (Asus Xiton Pro Live Camera), the algorithm alters its previous predictions to generate a more accurate location in real-time.
+
+During the navigation section of the competition, Adaptive Monte Carlo Localization (AMCL) - a probabilistic localization algorithm - was used to keep track of the robot's location within the generated map along with the real world. 
+
+
+Hypothesis
+========== 
+
+The question for this competition was if it was possible to reliably and efficiently navigate an unknown course in a known map location.
+
+Hypothesis: We believe that by altering the way-point position and orientation along with the use of the various navigation algorithms provided by ROS, our machine should be able to navigate the course dictated by variable pylon locations.
+
+Materials
+=========
+
+ - Turtlebot 2 Robot 
+ - Asus Xtion Pro
+ - ROS
+
+
+Method
+======
+
+Initially, we move to the predicted location of the starting line.
+
+```python
+# Start by going to the first cone/waypoint
+client.send_goal(goal_pose(waypoints[0]))
+client.wait_for_result()
+```
+This move gives our robot more time to localize itself before the actual race begins - saving invaluable time at the beginning of the race. Since we were given the opportunity to state a rough estimate on its pose on rviz, more time was available for the particles to converge.
+ 
+Our approach to the problem at hand was to utilize the built in features for navigation. The following code represents the basis of our solution.
+
+```python
+client.send_goal(goal_pose(waypoints[i]))
+client.wait_for_result()
+```
+
+By simplifying our problem down to reaching predetermined coordinates via goal poses/waypoints, all we had to do was set relatively 'safe' locations for our robot to go to in a loop. The task of navigation and avoidance of pylons was done by the ROS package ``` turtlebot_navigation ``` .
+
+We knew that if we could complete one lap of the course, then two laps would be also doable.
+
+
+Results
+=======
+
+ Fortunately, our robot performed well during the competition, as our team placed first. This was mostly thanks to our robot not re-localizing after every turn. Also, as we were given three opportunities, we were able to adjust our waypoints to perform two laps around the course.
+
+We can see the results of the final round where we were able to successfully complete two laps around the course [here](https://youtu.be/PyomZwF-0Do) 
+
+Discussion
+==========
+
+The most difficult issue to tackle during the competition was how to navigate the course without knowing the placement of the pylons before hand. This problem was remedied by looking at the previous year's competition results. By using their pylon placements as a potential configuration, we only needed minor adjustments to our waypoints during the actual competition.
+
+Conclusions
+===========
+
+In the end, our goal was to further understand SLAM and navigation of a map via AMCL. From the results of the competition, we can come to terms with our performance, but as always, there is room for improvement. Our robot successfully ran the given course in a timely manner, thus the algorithm was functional to some extent. Overall, the results of our program supports our hypothesis, due to our robot's ability to navigate the given course.
+
+Future improvements would include:
+ - dynamic routing, so the operator does not have to manually input the waypoints.
+ - increased speed for faster times
+ - better mapping/more accurate mapping.
